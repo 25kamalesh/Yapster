@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import User from "../Models/Users.model.js";
 import bcrypt from "bcryptjs";
 import tokenGeneration from "../lib/token.js";
+import cloudinary from "../lib/cloudinary.js";
+
 
 const signUp = async (request, response, next) => {
     const session = await mongoose.startSession();
@@ -104,8 +106,36 @@ const signOut = (request, response ,next) => {
     
 };
 
-const updateprofile = (request , response , next) => {
+const updateprofile = async (request , response , next) => {
+    try{
+    const {profilePicture} = request.body
+    const userId = request.user._id;
 
+    if (!profilePicture) {
+        const error = new Error("Please provide a profile picture URL");
+        error.statusCode = 400;
+        throw error
+    }
+    const uploadResponse = await cloudinary.uploader.upload(profilePicture)
+    const updatedUser =await User.findByIdAndUpdate(userId,{profilePicture:uploadResponse.secure_url},{new:true});
+
+} 
+
+    catch (error) {
+        next(error);
+    }
 }
 
-export { signUp, SignIn, signOut  ,updateprofile};
+const checkauth = (request, response, next) => {
+    try{
+        response.status(200).json({
+            message: "You are authenticated",
+            user: request.user
+        })
+    }
+    catch(error) {
+        next(error)
+    }
+}
+
+export { signUp, SignIn, signOut  ,updateprofile , checkauth};

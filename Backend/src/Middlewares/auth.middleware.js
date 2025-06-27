@@ -1,12 +1,15 @@
 import User from "../Models/Users.model.js"
+import ENV_VARS from "../config/env.js";
+import jwt from "jsonwebtoken";
 
 const protectedRoute  = async (request , response , next) => {
     try{
-    const token  = request.cookie.jwt
+    const token  = request.cookies.jwt // Fixed: cookies (plural), not cookie
     
     if (!token) {
         const error = new Error("You are not authenticated. Please sign in.");
         error.statusCode = 401;
+        throw error; // Added missing throw
     }
 
     const decodedToken = jwt.verify(token, ENV_VARS.JWT_SECRET);
