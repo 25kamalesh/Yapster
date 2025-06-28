@@ -5,6 +5,11 @@ export const getUsersForSidebar = async (request, response, next) => {
     try{
         const loggedInUserId = request.user._id;
         const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-passcode ");
+        if (!filteredUsers) {
+            const error = new Error("No users found");
+            error.statusCode = 404;
+            throw error;
+        }
         response.status(200).json(filteredUsers);
     }   
     catch(error) {
