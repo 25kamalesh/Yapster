@@ -8,17 +8,24 @@ import ErrorHandler from './Middlewares/error.middleware.js';
 import messageRouter from './Routes/message.Routes.js';
 import cors from 'cors';
 
+
+
 dotenv.config()
 const app = express()
 const PORT = ENV_VARS.PORT
 
 
-app.use(express.json())
-app.use(cookieParser()) // Add cookie parser middleware
-app.use(cors( {
-    origin: "http://localhost:5173", // Adjust this to your frontend URL
-    credentials: true, // Allow cookies to be sent with requests        
+app.use(cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 })); // Enable CORS
+
+// Increase payload size limits for image uploads
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ limit: '50mb', extended: true }))
+app.use(cookieParser()) // Add cookie parser middleware
 
 app.use('/api/v1/auth' , authRouter)
 app.use('/api/v1/message' , messageRouter)

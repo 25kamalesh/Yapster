@@ -43,7 +43,7 @@ const signUp = async (request, response, next) => {
             { session: session }
         );
 
-        tokenGeneration(newUser._id, response);
+        tokenGeneration(newUser[0]._id, response);
         await session.commitTransaction();
         response.status(201).json({
             success: true,
@@ -66,14 +66,14 @@ const SignIn = async (request, response , next) => {
     try{
        const user  =  await User.findOne({email})
        if(!user) {
-        const error = new Error ("Such a user does not exist...Please sign Up!!")
+        const error = new Error ("User not found. Please sign up.")
         error.statusCode = 404
         throw error
        }
        const isPasscodeCorrect = await bcrypt.compare(passcode , user.passcode)
 
        if (!isPasscodeCorrect) {
-        const error = new Error ("Please Enter Valid passcode")
+        const error = new Error ("Invalid passcode. Please try again.")
         error.statusCode = 401
         throw error
        }
@@ -83,6 +83,7 @@ const SignIn = async (request, response , next) => {
         success: true,
         _id: user._id,
         email: user.email,
+        Fullname: user.Fullname,
         profilePicture: user.profilePicture
        })
 
@@ -117,10 +118,18 @@ const updateprofile = async (request , response , next) => {
         throw error
     }
     const uploadResponse = await cloudinary.uploader.upload(profilePicture)
-    const updatedUser =await User.findByIdAndUpdate(userId,{profilePicture:uploadResponse.secure_url},{new:true});
+    const updatedUser = await User.findByIdAndUpdate(userId,{profilePicture:uploadResponse.secure_url},{new:true});
+
+
+response.status(200).json({
+    success: true,
+    _id: updatedUser._id,
+    email: updatedUser.email,
+    Fullname: updatedUser.Fullname,
+    profilePicture: updatedUser.profilePicture
+})
 
 } 
-
     catch (error) {
         next(error);
     }

@@ -3,20 +3,20 @@ import { useState } from 'react'
 import { useAuthStore } from '../Store/useAuthStore.js'
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-react";
 import { Link } from 'react-router-dom';
-import AuthImagePattern from '../Components/AuthImagePattern.jsx';
 import { toast } from 'react-hot-toast';
+import AuthImagePattern from '../components/AuthImagePattern.jsx';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    FullName: '',
+    Fullname: '',
     email: '',
     passcode: ''
   });
   const { signUp , isSigningUp } = useAuthStore();
 
   const validateForm = () => {
-    if (!formData.FullName.trim()) return toast.error("Full name is required");
+    if (!formData.Fullname.trim()) return toast.error("Full name is required");
     if (!formData.email.trim()) return toast.error("Email is required");
     if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format");
     if (!formData.passcode) return toast.error("Password is required");
@@ -67,8 +67,8 @@ const SignUpPage = () => {
                   type="text"
                   className={`input input-bordered w-full pl-10`}
                   placeholder="John Doe"
-                  value={formData.FullName}
-                  onChange={(e) => setFormData({ ...formData, FullName: e.target.value })}
+                  value={formData.Fullname}
+                  onChange={(e) => setFormData({ ...formData, Fullname: e.target.value })}
                 />
               </div>
             </div>
@@ -120,16 +120,28 @@ const SignUpPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full" disabled={isSigningUp}>
+            <button 
+              type="submit" 
+              className={`
+                w-full py-3 px-4 text-white font-semibold rounded-lg transition-all duration-300 transform
+                ${isSigningUp 
+                  ? 'bg-gradient-to-r from-gray-600 to-gray-700 cursor-not-allowed opacity-60' 
+                  : 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/30 active:scale-[0.98] cursor-pointer'
+                }
+              `}
+              disabled={isSigningUp}
+            >
               {isSigningUp ? (
                 <>
-                  <Loader2 className="size-5 animate-spin" />
+                  <Loader2 className="size-5 animate-spin mr-2 inline-block" />
                   Loading...
                 </>
               ) : (
                 "Create Account"
               )}
             </button>
+
+
           </form>
 
           <div className="text-center">
