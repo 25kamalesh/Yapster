@@ -8,10 +8,14 @@ import ErrorHandler from './Middlewares/error.middleware.js';
 import messageRouter from './Routes/message.Routes.js';
 import cors from 'cors';
 import { app , server, io } from './lib/Socket.js'; // Import the app and server from Socket.js
+import path from 'path';
+
 
 
 dotenv.config()
 const PORT = ENV_VARS.PORT
+const NODE_ENV = ENV_VARS.NODE_ENV
+const __dirname = path.resolve(); // Get the current directory path
 
 app.use(cors({
     origin: [
@@ -31,6 +35,14 @@ app.use(cookieParser()) // Add cookie parser middleware
 
 app.use('/api/v1/auth' , authRouter)
 app.use('/api/v1/messages' , messageRouter)
+
+if (NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../Frontend", "dist", "index.html"));
+  });
+}
 
 app.use(ErrorHandler)
 server.listen(PORT, async () => {
