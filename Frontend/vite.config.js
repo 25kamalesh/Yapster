@@ -8,4 +8,9 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  server: {
+    allowedHosts: [
+      "5cd9-2406-7400-c4-84b3-c41c-ede8-88cc-7539.ngrok-free.app"
+    ]
+  }
 })
