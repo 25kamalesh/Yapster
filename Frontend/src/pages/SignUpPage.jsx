@@ -4,7 +4,7 @@ import { useAuthStore } from '../Store/useAuthStore.js'
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import AuthImagePattern from '../components/AuthImagePattern.jsx';
+import AuthImagePattern from '../Components/AuthImagePattern.jsx';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
